@@ -66,37 +66,22 @@ class TestBridgeModifyDel:  # 网桥修改和删除的测试类
         """测试网桥修改和删除功能"""
         with allure.step(' 1、修改网桥成员接口，选择其他两个物理口【check1】【check2】'
                          '【check1】修改网桥成功，界面显示与配置一致【check2】linux查看接口ip address一致'):
-            # 记录创建的网桥信息
-            logger.info(create_bridge)
-            # 获取可用的网络设备列表
-            net_dev_list = create_bridge['net_dev_list']
-            # 获取创建的网桥对象
-            bridge = create_bridge['bridge']
-            # 设置网桥使用新的网络设备
-            g_default_cfg_bridge.net_dev = net_dev_list
-            # 更新网桥配置
-            g_api_global.bridge__detail_update(pk=bridge['_pk'], params=g_default_cfg_bridge)
-            # 等待配置下发完成
-            g_api_global.config_issued_global_get_until_zero()
-            # 检查接口成员是否更新成功
-            check_interface_member(g_api_global, bridge['name'], net_dev_list)
+            logger.info(create_bridge)  # 记录创建的网桥信息
+            net_dev_list = create_bridge['net_dev_list']  # 获取可用的网络设备列表
+            bridge = create_bridge['bridge']  # 获取创建的网桥对象
+            g_default_cfg_bridge.net_dev = net_dev_list  # 设置网桥使用新的网络设备
+            g_api_global.bridge__detail_update(pk=bridge['_pk'], params=g_default_cfg_bridge)  # 更新网桥配置
+            g_api_global.config_issued_global_get_until_zero()  # 等待配置下发完成
+            check_interface_member(g_api_global, bridge['name'], net_dev_list)  # 检查接口成员是否更新成功
 
         with allure.step('2、修改网桥成员接口，选择其他两个链路聚合口【check1】【check2】'):
-            # 设置网桥使用链路聚合口
-            g_default_cfg_bridge.net_dev = create_bridge['bond_list']
-            # 等待配置下发完成
-            g_api_global.config_issued_global_get_until_zero()
-            # 更新网桥配置
-            g_api_global.bridge__detail_update(pk=bridge['_pk'], params=g_default_cfg_bridge)
-            # 等待配置下发完成
-            g_api_global.config_issued_global_get_until_zero()
-            # 检查接口成员是否更新成功
-            check_interface_member(g_api_global, bridge['name'], g_default_cfg_bridge.net_dev)
+            g_default_cfg_bridge.net_dev = create_bridge['bond_list']  # 设置网桥使用链路聚合口
+            g_api_global.config_issued_global_get_until_zero()  # 等待配置下发完成
+            g_api_global.bridge__detail_update(pk=bridge['_pk'], params=g_default_cfg_bridge)  # 更新网桥配置
+            g_api_global.config_issued_global_get_until_zero()  # 等待配置下发完成
+            check_interface_member(g_api_global, bridge['name'], g_default_cfg_bridge.net_dev)  # 检查接口成员是否更新成功
 
         with allure.step('3、删除网桥【check2】【check3】'):
-            # 删除网桥
-            g_api_global.bridge__detail_delete(pk=bridge['_pk'])
-            # 等待配置下发完成
-            g_api_global.config_issued_global_get_until_zero()
-            # 验证网桥是否成功删除
-            assert not check_interface(g_api_global, bridge['name'])
+            g_api_global.bridge__detail_delete(pk=bridge['_pk'])  # 删除网桥
+            g_api_global.config_issued_global_get_until_zero()  # 等待配置下发完成
+            assert not check_interface(g_api_global, bridge['name'])  # 验证网桥是否成功删除
